@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard Evaluación Agencias | MCAP & TGA</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --P:#1a3c5e; --A:#00a8e0; --L:#f4f7fb; --B:#d0dce9;
+  --T:#1e293b; --M:#64748b; --G:#17b26a; --Y:#f59e0b; --R:#ef4444;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--L);color:var(--T);min-height:100vh}
+
+/* ── HEADER ── */
+header{background:var(--P);color:#fff;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:19px;font-weight:700}
+header p{font-size:12px;opacity:.7;margin-top:2px}
+.hbadge{background:var(--A);color:#fff;font-size:12px;font-weight:700;padding:4px 11px;border-radius:16px}
+.hbtn{background:transparent;border:1.5px solid rgba(255,255,255,.45);color:#fff;padding:7px 15px;border-radius:7px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.hbtn:hover{background:rgba(255,255,255,.12)}
+
+/* ── TABS ── */
+.tab-nav{display:flex;background:#fff;border-bottom:2px solid var(--B);padding:0 24px;gap:4px;position:sticky;top:0;z-index:10}
+.tab-btn{padding:13px 20px;border:none;background:none;font-size:13px;font-weight:600;color:var(--M);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap}
+.tab-btn.active{color:var(--P);border-bottom-color:var(--A)}
+.tab-btn:hover:not(.active){color:var(--T);background:var(--L);border-radius:6px 6px 0 0}
+
+/* ── LAYOUT ── */
+.tab-content{display:none;max-width:1000px;margin:28px auto;padding:0 20px 60px}
+.tab-content.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--B);border-radius:12px;padding:22px}
+.card+.card{margin-top:16px}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--A);margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.card-title .num{background:var(--P);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+
+/* ── FORM ELEMENTS ── */
+label.lbl{display:block;font-size:11px;font-weight:600;color:var(--M);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+input[type=text],select{width:100%;border:1.5px solid var(--B);border-radius:7px;padding:8px 11px;font-size:13px;color:var(--T);font-family:inherit}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--A)}
+.field{margin-bottom:12px}
+
+/* ── AGENCY NAME INPUTS ── */
+.agency-name-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.agency-name-grid{grid-template-columns:1fr}}
+.agency-name-item{display:flex;align-items:center;gap:8px}
+.agency-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+
+/* ── WEIGHT SLIDERS ── */
+.weight-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f4f8}
+.weight-row:last-child{border-bottom:none}
+.weight-name{flex:1;font-size:13px;font-weight:500;min-width:160px}
+.weight-desc{font-size:11px;color:var(--M);margin-top:1px}
+.weight-slider{flex:1.5}
+.weight-slider input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:3px;background:#e2e8f0;cursor:pointer}
+.weight-slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--P);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.weight-pct{width:44px;text-align:right;font-weight:700;font-size:13px;color:var(--P)}
+.weight-total{text-align:right;padding-top:10px;font-size:13px;font-weight:600}
+.weight-total span{color:var(--G)}
+
+/* ── EVALUATORS ── */
+.eval-list{display:flex;flex-direction:column;gap:7px}
+.eval-row{display:flex;align-items:center;gap:8px}
+.eval-row input{flex:1}
+.btn-icon{background:none;border:none;cursor:pointer;color:var(--M);font-size:16px;padding:4px;border-radius:5px;line-height:1}
+.btn-icon:hover{background:var(--L);color:var(--R)}
+.btn-add{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px dashed var(--B);background:none;border-radius:7px;font-size:12px;color:var(--M);cursor:pointer;width:100%;margin-top:6px;font-family:inherit}
+.btn-add:hover{border-color:var(--A);color:var(--A)}
+
+/* ── AGENCY TABS (inner) ── */
+.agency-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.atab{padding:8px 16px;border-radius:20px;border:1.5px solid var(--B);background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:var(--M);transition:all .2s;display:flex;align-items:center;gap:6px}
+.atab.active{color:#fff;border-color:transparent}
+.atab .adot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* ── SCORE TABLE ── */
+.score-table-wrap{overflow-x:auto}
+.score-table{width:100%;border-collapse:collapse;font-size:12px}
+.score-table th{background:var(--P);color:#fff;padding:8px 6px;text-align:center;font-weight:600;white-space:nowrap;font-size:11px}
+.score-table th:first-child{text-align:left;padding-left:12px;min-width:110px}
+.score-table td{padding:6px;border-bottom:1px solid #f0f4f8;text-align:center}
+.score-table td:first-child{text-align:left;padding-left:12px;font-weight:500;font-size:12px;color:var(--T)}
+.score-table tr:hover td{background:#fafbfd}
+.score-table .avg-row td{background:var(--L);font-weight:700;color:var(--P);border-top:2px solid var(--B)}
+.score-table input.score-input{width:44px;border:1.5px solid var(--B);border-radius:5px;padding:5px 4px;text-align:center;font-size:12px;font-family:inherit;color:var(--T)}
+.score-table input.score-input:focus{outline:none;border-color:var(--A)}
+.score-table .total-col{background:rgba(26,60,94,.06);font-weight:700;color:var(--P)}
+.hint{font-size:11px;color:var(--M);margin-top:8px;font-style:italic}
+
+/* ── PROGRESS BADGES ── */
+.progress-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.pchip{padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700}
+
+/* ── RESULTS CARDS ── */
+.winner-card{border-radius:14px;padding:28px;color:#fff;text-align:center;position:relative;overflow:hidden}
+.winner-card .crown{font-size:36px;margin-bottom:8px}
+.winner-card .wname{font-size:28px;font-weight:900;letter-spacing:-.5px;margin-bottom:4px}
+.winner-card .wscore{font-size:18px;opacity:.85;margin-bottom:12px}
+.winner-card .wdesc{font-size:13px;opacity:.75;max-width:480px;margin:0 auto}
+.winner-card .margin-badge{display:inline-block;background:rgba(255,255,255,.2);padding:4px 14px;border-radius:10px;font-size:12px;margin-top:10px}
+
+/* Ranking table */
+.rank-table{width:100%;border-collapse:collapse;font-size:13px}
+.rank-table th{padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--M);border-bottom:2px solid var(--B);white-space:nowrap}
+.rank-table td{padding:10px 12px;border-bottom:1px solid #f0f4f8;vertical-align:middle}
+.rank-table tr:last-child td{border-bottom:none}
+.rank-badge{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff}
+.score-bar-cell{width:200px}
+.score-bar-bg{background:#e2e8f0;border-radius:4px;height:10px;width:100%}
+.score-bar-fill{border-radius:4px;height:10px;transition:width .6s}
+
+/* criterion winner table */
+.crit-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.crit-table th{padding:7px 10px;text-align:left;font-size:11px;color:var(--M);border-bottom:1px solid var(--B)}
+.crit-table td{padding:7px 10px;border-bottom:1px solid #f8fafc;vertical-align:middle}
+.crit-table tr:last-child td{border-bottom:none}
+.crit-winner-badge{display:inline-block;padding:2px 9px;border-radius:8px;font-size:11px;font-weight:700;color:#fff}
+
+/* chart containers */
+.chart-container{position:relative;height:260px;margin-top:4px}
+.chart-container-lg{position:relative;height:320px;margin-top:4px}
+
+/* empty state */
+.empty-state{text-align:center;padding:40px;color:var(--M)}
+.empty-state .icon{font-size:40px;margin-bottom:10px}
+.empty-state p{font-size:14px}
+
+/* actions */
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+.btn{padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.btn-primary{background:var(--P);color:#fff}
+.btn-primary:hover{opacity:.88}
+.btn-outline{background:#fff;color:var(--P);border:1.5px solid var(--B)}
+.btn-outline:hover{border-color:var(--A);color:var(--A)}
+.btn-green{background:var(--G);color:#fff}
+.btn-green:hover{opacity:.88}
+
+/* warning */
+.alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.alert-warn{background:#fef9ec;border:1px solid #fcd34d;color:#92400e}
+.alert-ok{background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46}
+
+@media print{
+  header{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .tab-nav,.actions,.agency-tabs,.score-table-wrap,.btn-add,.eval-row button{display:none!important}
+  .tab-content{display:block!important;margin:0;padding:0}
+  #tab-config,#tab-scores{display:none!important}
+  .winner-card{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Dashboard de Evaluación — Agencias de Medios Digitales</h1>
+    <p>Selección final · MCAP &amp; TGA · Presentaciones 17 Mar 2026</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span class="hbadge">4 Agencias</span>
+    <button class="hbtn" onclick="exportResults()">🖨 Exportar resultados</button>
+  </div>
+</header>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" id="btn-config" onclick="showTab('config')">⚙️ Configuración</button>
+  <button class="tab-btn" id="btn-scores" onclick="showTab('scores')">📝 Ingresar Puntajes</button>
+  <button class="tab-btn" id="btn-results" onclick="showTab('results')">🏆 Resultados &amp; Ganador</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 1 — CONFIGURACIÓN
+══════════════════════════════════════════════ -->
+<section class="tab-content active" id="tab-config">
+
+  <div class="grid2">
+
+    <!-- Agency Names -->
+    <div class="card">
+      <div class="card-title"><span class="num">A</span> Nombres de las Agencias</div>
+      <div class="agency-name-grid" id="agencyNameGrid"></div>
+    </div>
+
+    <!-- Evaluators -->
+    <div class="card">
+      <div class="card-title"><span class="num">B</span> Evaluadores</div>
+      <div class="eval-list" id="evalList"></div>
+      <button class="btn-add" onclick="addEvaluator()">+ Agregar evaluador</button>
+    </div>
+
+  </div>
+
+  <!-- Weights -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-title"><span class="num">C</span> Ponderaciones por Criterio <span style="font-size:10px;color:var(--M);text-transform:none;letter-spacing:0;font-weight:400">&nbsp;— Ajustables según tus prioridades</span></div>
+    <div id="weightRows"></div>
+    <div class="weight-total">Total: <span id="weightTotal">100%</span></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="showTab('scores')">Continuar → Ingresar Puntajes</button>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 — INGRESAR PUNTAJES
+══════════════════════════════════════════════ -->
+<section class="tab-content" id="tab-scores">
+
+  <div class="card">
+    <div class="card-title"><span class="num">2</span> Puntajes por Agencia</div>
+    <p style="font-size:12px;color:var(--M);margin-bottom:14px">
+      Ingresá las notas de cada evaluador para cada criterio (escala 1–10). Dejá vacío si el evaluador no calificó ese criterio. El sistema calcula los promedios y el puntaje ponderado automáticamente.
+    </p>
+
+    <!-- Agency inner tabs -->
+    <div class="agency-tabs" id="agencyTabs"></div>
+
+    <!-- Agency score panels -->
+    <div id="agencyPanels"></div>
+
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="showTab('config')">← Volver</button>
+    <button class="btn btn-green" onclick="showTab('results')">Ver Resultados →</button>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════
+     TAB 3 — RESULTADOS
+══════════════════════════════════════════════ -->
+<section class="tab-content" id="tab-results">
+
+  <div id="resultsContent">
+    <div class="empty-state">
+      <div class="icon">📊</div>
+      <p>Ingresá los puntajes en la pestaña anterior para ver los resultados.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+/* ═══════════════ STATE ═══════════════ */
+const CRITERIA = [
+  { name:'Comprensión del Brief',     short:'Brief',      defaultW:10,  desc:'Contexto B2B/B2C, ICP, activos estratégicos' },
+  { name:'Estrategia B2B ★★',         short:'B2B',        defaultW:25,  desc:'10+ reuniones/sem, decisores RRHH/Legal/HSE' },
+  { name:'Estrategia B2C/Micro-B2B ★',short:'B2C',        defaultW:15,  desc:'3 públicos, 20+ transacciones/sem, CAC ≤$2' },
+  { name:'Creatividad y Contenidos',  short:'Creatividad',defaultW:10,  desc:'Copies, avisos, priorización Ley Karin→RCP' },
+  { name:'Canales y SEM ★',           short:'Canales',    defaultW:15,  desc:'Google/LinkedIn/Meta, remarketing, keywords' },
+  { name:'Métricas y Economics',      short:'Métricas',   defaultW:10,  desc:'CAC target, KPIs, dashboard de seguimiento' },
+  { name:'Propuesta Económica',       short:'Inversión',  defaultW:10,  desc:'Transparencia, mix pauta vs honorarios' },
+  { name:'Confianza en el Equipo',    short:'Equipo',     defaultW: 5,  desc:'Experiencia B2B/EdTech, cases, fit cultural' },
+];
+
+const AGENCY_COLORS = [
+  { hex:'#1a3c5e', bg:'rgba(26,60,94,0.75)',   light:'#e8f0f8' },
+  { hex:'#00a8e0', bg:'rgba(0,168,224,0.75)',  light:'#e0f6ff' },
+  { hex:'#f59e0b', bg:'rgba(245,158,11,0.75)', light:'#fef9ec' },
+  { hex:'#17b26a', bg:'rgba(23,178,106,0.75)', light:'#ecfdf5' },
+];
+
+const state = {
+  agencyNames: ['Agencia 1','Agencia 2','Agencia 3','Agencia 4'],
+  evaluatorNames: ['Jorge Plaza','Pamela','Cristina','Guillermo Schulte'],
+  weights: CRITERIA.map(c => c.defaultW),
+  // scores[agency][evaluator][criterion] = 1-10 or null
+  scores: Array.from({length:4}, () => Array.from({length:6}, () => new Array(8).fill(null))),
+};
+
+let activeAgencyTab = 0;
+let barChart = null, radarChart = null;
+
+/* ═══════════════ TAB NAVIGATION ═══════════════ */
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('btn-' + tab).classList.add('active');
+  if (tab === 'results') renderResults();
+}
+
+/* ═══════════════ INIT ═══════════════ */
+function init() {
+  renderAgencyNames();
+  renderEvaluators();
+  renderWeights();
+  renderAgencyTabs();
+  renderAgencyPanel(0);
+}
+
+/* ─── Agency Names ─── */
+function renderAgencyNames() {
+  const g = document.getElementById('agencyNameGrid');
+  g.innerHTML = state.agencyNames.map((name, i) => `
+    <div class="agency-name-item">
+      <div class="agency-dot" style="background:${AGENCY_COLORS[i].hex}"></div>
+      <input type="text" value="${name}" placeholder="Nombre agencia ${i+1}"
+        oninput="state.agencyNames[${i}]=this.value;syncAgencyNames()" />
+    </div>
+  `).join('');
+}
+
+function syncAgencyNames() {
+  // Update inner tabs
+  document.querySelectorAll('.atab').forEach((btn, i) => {
+    btn.innerHTML = `<span class="adot" style="background:${AGENCY_COLORS[i].hex}"></span>${state.agencyNames[i]}`;
+  });
+}
+
+/* ─── Evaluators ─── */
+function renderEvaluators() {
+  const list = document.getElementById('evalList');
+  list.innerHTML = state.evaluatorNames.map((name, i) => `
+    <div class="eval-row">
+      <input type="text" value="${name}" placeholder="Nombre evaluador ${i+1}"
+        oninput="state.evaluatorNames[${i}]=this.value;renderAgencyPanel(activeAgencyTab)" />
+      ${state.evaluatorNames.length > 1
+        ? `<button class="btn-icon" title="Eliminar" onclick="removeEvaluator(${i})">✕</button>`
+        : ''}
+    </div>
+  `).join('');
+}
+
+function addEvaluator() {
+  if (state.evaluatorNames.length >= 6) return alert('Máximo 6 evaluadores.');
+  state.evaluatorNames.push('Evaluador ' + (state.evaluatorNames.length + 1));
+  renderEvaluators();
+  renderAgencyPanel(activeAgencyTab);
+}
+
+function removeEvaluator(idx) {
+  state.evaluatorNames.splice(idx, 1);
+  state.scores.forEach(agency => agency.splice(idx, 1));
+  while (state.scores[0].length < 6)
+    state.scores.forEach(agency => agency.push(new Array(8).fill(null)));
+  renderEvaluators();
+  renderAgencyPanel(activeAgencyTab);
+}
+
+/* ─── Weights ─── */
+function renderWeights() {
+  const container = document.getElementById('weightRows');
+  container.innerHTML = CRITERIA.map((c, i) => `
+    <div class="weight-row">
+      <div class="weight-name">
+        <div style="font-size:13px;font-weight:600">${c.name}</div>
+        <div style="font-size:11px;color:var(--M)">${c.desc}</div>
+      </div>
+      <div class="weight-slider">
+        <input type="range" min="0" max="40" value="${state.weights[i]}"
+          oninput="state.weights[${i}]=+this.value;document.getElementById('wpct${i}').textContent=this.value+'%';updateWeightTotal()" />
+      </div>
+      <div class="weight-pct" id="wpct${i}">${state.weights[i]}%</div>
+    </div>
+  `).join('');
+  updateWeightTotal();
+}
+
+function updateWeightTotal() {
+  const total = state.weights.reduce((a,b)=>a+b,0);
+  const el = document.getElementById('weightTotal');
+  el.textContent = total + '%';
+  el.style.color = total === 100 ? 'var(--G)' : 'var(--R)';
+}
+
+/* ─── Agency Score Tabs ─── */
+function renderAgencyTabs() {
+  const tabs = document.getElementById('agencyTabs');
+  tabs.innerHTML = state.agencyNames.map((name, i) => `
+    <button class="atab ${i===0?'active':''}" id="atab-${i}"
+      style="${i===0?`background:${AGENCY_COLORS[0].hex};color:#fff;border-color:${AGENCY_COLORS[0].hex}`:''}"
+      onclick="selectAgencyTab(${i})">
+      <span class="adot" style="background:${i===0?'rgba(255,255,255,.5)':AGENCY_COLORS[i].hex}"></span>
+      ${name}
+    </button>
+  `).join('');
+}
+
+function selectAgencyTab(i) {
+  activeAgencyTab = i;
+  document.querySelectorAll('.atab').forEach((btn, j) => {
+    if (j === i) {
+      btn.classList.add('active');
+      btn.style.cssText = `background:${AGENCY_COLORS[i].hex};color:#fff;border-color:${AGENCY_COLORS[i].hex}`;
+    } else {
+      btn.classList.remove('active');
+      btn.style.cssText = '';
+    }
+  });
+  renderAgencyPanel(i);
+}
+
+/* ─── Score Entry Table per Agency ─── */
+function renderAgencyPanel(agencyIdx) {
+  const container = document.getElementById('agencyPanels');
+  const nEval = state.evaluatorNames.length;
+  const accentColor = AGENCY_COLORS[agencyIdx].hex;
+
+  // Compute per-criterion averages
+  const avgs = CRITERIA.map((_, ci) => {
+    const vals = state.scores[agencyIdx].slice(0,nEval).map(ev=>ev[ci]).filter(v=>v!==null&&v>=1&&v<=10);
+    return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+  });
+
+  // Compute per-evaluator weighted totals
+  const evalTotals = state.evaluatorNames.map((_, ei) => {
+    let wsum=0, wused=0;
+    CRITERIA.forEach((_,ci)=>{
+      const v=state.scores[agencyIdx][ei][ci];
+      if(v!==null&&v>=1&&v<=10){wsum+=v*state.weights[ci];wused+=state.weights[ci];}
+    });
+    return wused>0 ? ((wsum/wused)*10).toFixed(0) : '—';
+  });
+
+  // Overall weighted score
+  const overallScore = calcAgencyScore(agencyIdx);
+  const pctFilled = countFilledCells(agencyIdx,nEval);
+
+  container.innerHTML = `
+    <div id="agency-panel-${agencyIdx}">
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+        <div style="background:${AGENCY_COLORS[agencyIdx].light};border:1.5px solid ${accentColor};
+          border-radius:10px;padding:10px 18px;display:flex;align-items:center;gap:10px">
+          <div style="font-size:11px;color:var(--M);font-weight:600">PUNTAJE PONDERADO</div>
+          <div style="font-size:26px;font-weight:900;color:${accentColor}">${overallScore!==null?overallScore.toFixed(0):'—'}</div>
+          <div style="font-size:11px;color:var(--M)">/100</div>
+        </div>
+        <div style="font-size:12px;color:var(--M)">${pctFilled} celdas completadas de ${nEval*8}</div>
+      </div>
+
+      <div class="score-table-wrap">
+        <table class="score-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">Evaluador</th>
+              ${CRITERIA.map((c,ci)=>`
+                <th title="${c.name} — ${c.desc}"
+                  style="cursor:help">${c.short}<br><span style="font-size:9px;opacity:.7">${state.weights[ci]}%</span></th>
+              `).join('')}
+              <th style="background:rgba(255,255,255,.15)">Total (/100)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${state.evaluatorNames.map((evName, ei) => `
+              <tr>
+                <td>${evName}</td>
+                ${CRITERIA.map((_, ci) => {
+                  const val = state.scores[agencyIdx][ei][ci];
+                  return `<td>
+                    <input class="score-input" type="number" min="1" max="10"
+                      value="${val!==null?val:''}"
+                      placeholder="—"
+                      onchange="setScore(${agencyIdx},${ei},${ci},this.value)"
+                      onkeydown="navCell(event,${agencyIdx},${ei},${ci})" />
+                  </td>`;
+                }).join('')}
+                <td class="total-col" id="etotal-${agencyIdx}-${ei}">${evalTotals[ei]}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+          <tfoot>
+            <tr class="avg-row">
+              <td>⌀ Promedio</td>
+              ${avgs.map((avg,ci) => `
+                <td id="avg-${agencyIdx}-${ci}" style="color:${avg!==null?(avg>=7?'var(--G)':avg>=5?'var(--Y)':'var(--R)'):'var(--M)'}">
+                  ${avg!==null?avg.toFixed(1):'—'}
+                </td>
+              `).join('')}
+              <td class="total-col" id="atotal-${agencyIdx}" style="font-size:15px;color:${accentColor}">
+                ${overallScore!==null?'<strong>'+overallScore.toFixed(0)+'</strong>':'—'}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="hint">Tip: usa Tab/Enter para moverte entre celdas · Los totales se actualizan al instante</p>
+    </div>
+  `;
+}
+
+function countFilledCells(ai, nEval) {
+  let count=0;
+  for(let ei=0;ei<nEval;ei++) for(let ci=0;ci<8;ci++) if(state.scores[ai][ei][ci]!==null) count++;
+  return count;
+}
+
+function setScore(ai, ei, ci, rawVal) {
+  const v = rawVal === '' ? null : Math.min(10, Math.max(1, parseInt(rawVal)));
+  state.scores[ai][ei][ci] = isNaN(v) ? null : v;
+
+  // Live-update averages and totals without full re-render
+  const nEval = state.evaluatorNames.length;
+  const vals = state.scores[ai].slice(0,nEval).map(ev=>ev[ci]).filter(v=>v!==null&&v>=1&&v<=10);
+  const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+  const avgEl = document.getElementById(`avg-${ai}-${ci}`);
+  if (avgEl) {
+    avgEl.textContent = avg!==null ? avg.toFixed(1) : '—';
+    avgEl.style.color = avg!==null?(avg>=7?'var(--G)':avg>=5?'var(--Y)':'var(--R)'):'var(--M)';
+  }
+
+  // Update eval row total
+  let wsum=0,wused=0;
+  CRITERIA.forEach((_,k)=>{const v2=state.scores[ai][ei][k];if(v2!==null&&v2>=1&&v2<=10){wsum+=v2*state.weights[k];wused+=state.weights[k];}});
+  const evalTotal = wused>0 ? ((wsum/wused)*10).toFixed(0) : '—';
+  const etEl = document.getElementById(`etotal-${ai}-${ei}`);
+  if(etEl) etEl.textContent = evalTotal;
+
+  // Update agency overall
+  const os = calcAgencyScore(ai);
+  const atEl = document.getElementById(`atotal-${ai}`);
+  if(atEl) atEl.innerHTML = os!==null?`<strong>${os.toFixed(0)}</strong>`:'—';
+}
+
+function navCell(e, ai, ei, ci) {
+  const nEval=state.evaluatorNames.length;
+  let nEi=ei, nCi=ci;
+  if(e.key==='Tab'||e.key==='ArrowRight'){e.preventDefault();nCi=ci+1;if(nCi>=8){nCi=0;nEi=(ei+1)%nEval;}}
+  else if(e.key==='ArrowLeft'){e.preventDefault();nCi=ci-1;if(nCi<0){nCi=7;nEi=(ei-1+nEval)%nEval;}}
+  else if(e.key==='ArrowDown'||e.key==='Enter'){e.preventDefault();nEi=(ei+1)%nEval;}
+  else if(e.key==='ArrowUp'){e.preventDefault();nEi=(ei-1+nEval)%nEval;}
+  else return;
+  const sel=document.querySelector(`.score-table tbody tr:nth-child(${nEi+1}) td:nth-child(${nCi+2}) input`);
+  if(sel){sel.focus();sel.select();}
+}
+
+/* ═══════════════ SCORE CALCULATION ═══════════════ */
+function calcAgencyScore(ai) {
+  const nEval = state.evaluatorNames.length;
+  let wsum=0, wused=0;
+  CRITERIA.forEach((_,ci)=>{
+    const vals=state.scores[ai].slice(0,nEval).map(ev=>ev[ci]).filter(v=>v!==null&&v>=1&&v<=10);
+    if(vals.length){
+      const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+      wsum+=avg*state.weights[ci];
+      wused+=state.weights[ci];
+    }
+  });
+  return wused>0 ? (wsum/wused)*10 : null;
+}
+
+function getCriterionAvg(ai, ci) {
+  const nEval=state.evaluatorNames.length;
+  const vals=state.scores[ai].slice(0,nEval).map(ev=>ev[ci]).filter(v=>v!==null&&v>=1&&v<=10);
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+}
+
+/* ═══════════════ RESULTS ═══════════════ */
+function renderResults() {
+  const scores = state.agencyNames.map((_,i)=>({name:state.agencyNames[i],score:calcAgencyScore(i),idx:i}));
+  const valid = scores.filter(a=>a.score!==null).sort((a,b)=>b.score-a.score);
+
+  if (valid.length === 0) {
+    document.getElementById('resultsContent').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📊</div>
+        <p>Ingresá al menos un puntaje en la pestaña anterior para ver los resultados.</p>
+      </div>`;
+    return;
+  }
+
+  const winner = valid[0];
+  const runnerUp = valid[1] || null;
+  const margin = runnerUp ? (winner.score - runnerUp.score) : null;
+  const isClose = margin !== null && margin < 5;
+  const col = AGENCY_COLORS[winner.idx];
+
+  // ── Analysis per criterion ──
+  const critAnalysis = CRITERIA.map((c,ci)=>{
+    const avgs = state.agencyNames.map((_,ai)=>({name:state.agencyNames[ai],avg:getCriterionAvg(ai,ci),idx:ai}))
+      .filter(a=>a.avg!==null).sort((a,b)=>b.avg-a.avg);
+    return {criterion:c, winner:avgs[0]||null, avgs};
+  });
+
+  // ── Winner strengths ──
+  const strengths = critAnalysis.filter(ca=>ca.winner&&ca.winner.idx===winner.idx&&ca.winner.avg>=7).map(ca=>ca.criterion.name);
+  const weaknesses = critAnalysis.filter(ca=>{
+    const wa = ca.avgs.find(a=>a.idx===winner.idx);
+    return wa && wa.avg!==null && wa.avg<6;
+  }).map(ca=>ca.criterion.name);
+
+  document.getElementById('resultsContent').innerHTML = `
+
+    ${isClose ? `<div class="alert alert-warn">⚠️ Diferencia menor a 5 puntos entre las dos primeras agencias. Se recomienda profundizar la discusión en los criterios más estratégicos.</div>` : ''}
+
+    <!-- WINNER CARD -->
+    <div class="winner-card" style="background:linear-gradient(135deg,${col.hex},${adjustHex(col.hex,-20)});margin-bottom:16px">
+      <div class="crown">🏆</div>
+      <div class="wname">${winner.name}</div>
+      <div class="wscore">${winner.score.toFixed(1)} puntos sobre 100</div>
+      ${runnerUp ? `<div class="margin-badge">${isClose?'⚠️ Diferencia ajustada':'+'+margin.toFixed(1)+' pts sobre'} ${runnerUp.name}</div>` : ''}
+      ${strengths.length ? `<div class="wdesc" style="margin-top:12px">✅ Destaca en: ${strengths.join(', ')}</div>` : ''}
+      ${weaknesses.length ? `<div class="wdesc" style="margin-top:6px">⚠️ Área a revisar: ${weaknesses.join(', ')}</div>` : ''}
+    </div>
+
+    <!-- RANKING TABLE + BAR CHART -->
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title"><span class="num">1</span> Ranking General</div>
+        <table class="rank-table">
+          <thead><tr><th>#</th><th>Agencia</th><th>Puntaje</th><th>Barra</th></tr></thead>
+          <tbody>
+            ${valid.map((a,rank)=>`
+              <tr>
+                <td><span class="rank-badge" style="background:${rank===0?'#f59e0b':rank===1?'#94a3b8':rank===2?'#cd7f32':'#e2e8f0'}">${rank+1}</span></td>
+                <td><span style="font-weight:600;color:${AGENCY_COLORS[a.idx].hex}">${a.name}</span></td>
+                <td style="font-weight:700;font-size:15px">${a.score.toFixed(1)}</td>
+                <td class="score-bar-cell">
+                  <div class="score-bar-bg">
+                    <div class="score-bar-fill" style="width:${a.score}%;background:${AGENCY_COLORS[a.idx].hex}"></div>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="num">2</span> Puntaje Ponderado</div>
+        <div class="chart-container"><canvas id="barChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- RADAR CHART -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-title"><span class="num">3</span> Perfil por Criterio — Todas las Agencias</div>
+      <div class="chart-container-lg"><canvas id="radarChart"></canvas></div>
+    </div>
+
+    <!-- CRITERION BREAKDOWN -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-title"><span class="num">4</span> Análisis por Criterio</div>
+      <table class="crit-table">
+        <thead><tr>
+          <th>Criterio</th><th>Peso</th>
+          ${state.agencyNames.map((_,ai)=>`<th style="color:${AGENCY_COLORS[ai].hex}">${state.agencyNames[ai]}</th>`).join('')}
+          <th>Mejor en este criterio</th>
+        </tr></thead>
+        <tbody>
+          ${CRITERIA.map((c,ci)=>{
+            const rowAvgs = state.agencyNames.map((_,ai)=>getCriterionAvg(ai,ci));
+            const maxVal = Math.max(...rowAvgs.filter(v=>v!==null));
+            const critWinner = rowAvgs.indexOf(maxVal);
+            return `<tr>
+              <td><strong>${c.name}</strong><br><span style="font-size:11px;color:var(--M)">${c.desc}</span></td>
+              <td style="font-weight:700;color:var(--P)">${state.weights[ci]}%</td>
+              ${rowAvgs.map((avg,ai)=>`
+                <td style="text-align:center;font-weight:${ai===critWinner&&avg!==null?'800':'500'};
+                  color:${avg!==null?(avg>=7?'var(--G)':avg>=5?'var(--Y)':'var(--R)'):'var(--M)'}">
+                  ${avg!==null?avg.toFixed(1):'—'}
+                  ${ai===critWinner&&avg!==null?'⭐':''}
+                </td>
+              `).join('')}
+              <td>${critWinner>=0&&rowAvgs[critWinner]!==null
+                ? `<span class="crit-winner-badge" style="background:${AGENCY_COLORS[critWinner].hex}">${state.agencyNames[critWinner]}</span>`
+                : '<span style="color:var(--M);font-size:11px">Sin datos</span>'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions" style="margin-top:16px">
+      <button class="btn btn-outline" onclick="showTab('scores')">← Editar Puntajes</button>
+      <button class="btn btn-primary" onclick="exportResults()">🖨 Exportar PDF</button>
+    </div>
+  `;
+
+  // Render charts after HTML is in DOM
+  setTimeout(()=>{
+    renderBarChart(valid);
+    renderRadarChart();
+  }, 50);
+}
+
+/* ─── BAR CHART ─── */
+function renderBarChart(valid) {
+  const ctx = document.getElementById('barChart');
+  if (!ctx) return;
+  if (barChart) { barChart.destroy(); barChart=null; }
+
+  barChart = new Chart(ctx.getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: valid.map(a=>a.name),
+      datasets:[{
+        label:'Puntaje Ponderado',
+        data: valid.map(a=>a.score.toFixed(1)),
+        backgroundColor: valid.map(a=>AGENCY_COLORS[a.idx].bg),
+        borderColor: valid.map(a=>AGENCY_COLORS[a.idx].hex),
+        borderWidth:2,
+        borderRadius:6,
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw+' / 100'}}},
+      scales:{
+        x:{beginAtZero:true,max:100,grid:{color:'#f0f4f8'},ticks:{font:{size:11}}},
+        y:{grid:{display:false},ticks:{font:{size:12,weight:'bold'}}}
+      },
+      animation:{duration:600}
+    }
+  });
+}
+
+/* ─── RADAR CHART ─── */
+function renderRadarChart() {
+  const ctx = document.getElementById('radarChart');
+  if (!ctx) return;
+  if (radarChart) { radarChart.destroy(); radarChart=null; }
+
+  const datasets = state.agencyNames.map((name,ai)=>({
+    label: name,
+    data: CRITERIA.map((_,ci)=>getCriterionAvg(ai,ci)||0),
+    backgroundColor: AGENCY_COLORS[ai].bg.replace('0.75','0.15'),
+    borderColor: AGENCY_COLORS[ai].hex,
+    pointBackgroundColor: AGENCY_COLORS[ai].hex,
+    pointRadius:4,
+    borderWidth:2,
+  }));
+
+  radarChart = new Chart(ctx.getContext('2d'), {
+    type:'radar',
+    data:{
+      labels: CRITERIA.map(c=>c.short),
+      datasets
+    },
+    options:{
+      plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:16}}},
+      scales:{r:{
+        beginAtZero:false,min:0,max:10,
+        ticks:{stepSize:2,font:{size:10},backdropColor:'transparent'},
+        grid:{color:'#e2e8f0'},
+        angleLines:{color:'#e2e8f0'},
+        pointLabels:{font:{size:11,weight:'bold'},color:'#1e293b'}
+      }},
+      animation:{duration:600}
+    }
+  });
+}
+
+/* ─── Hex helper ─── */
+function adjustHex(hex, amount) {
+  const num=parseInt(hex.replace('#',''),16);
+  const r=Math.max(0,Math.min(255,((num>>16)&0xff)+amount));
+  const g=Math.max(0,Math.min(255,((num>>8)&0xff)+amount));
+  const b=Math.max(0,Math.min(255,(num&0xff)+amount));
+  return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+
+/* ─── Export ─── */
+function exportResults() {
+  showTab('results');
+  setTimeout(()=>window.print(), 400);
+}
+
+/* ═══════════════ BOOT ═══════════════ */
+init();
+</script>
+</body>
+</html>
