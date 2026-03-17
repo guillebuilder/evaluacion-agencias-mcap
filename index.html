@@ -8,21 +8,55 @@
 :root{--P:#1a3c5e;--A:#00a8e0;--G:#17b26a;--L:#f4f7fb;--B:#d0dce9;--T:#1e293b;--M:#64748b}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--L);color:var(--T);min-height:100vh;display:flex;flex-direction:column}
-header{background:var(--P);color:#fff;padding:32px 24px;text-align:center}
+header{background:var(--P);color:#fff;padding:28px 24px;text-align:center}
 header h1{font-size:22px;font-weight:800;margin-bottom:6px}
 header p{font-size:13px;opacity:.7}
 .badge{display:inline-block;background:var(--A);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:14px;margin-bottom:12px}
-main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
-.cards{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;max-width:720px;width:100%}
-.card{background:#fff;border:1px solid var(--B);border-radius:16px;padding:32px 28px;flex:1;min-width:260px;max-width:320px;text-align:center;text-decoration:none;color:var(--T);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;align-items:center;gap:12px}
+main{flex:1;padding:32px 20px}
+.section{max-width:760px;margin:0 auto}
+
+/* Cards */
+.cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:32px}
+.card{background:#fff;border:1px solid var(--B);border-radius:16px;padding:28px 24px;flex:1;min-width:240px;max-width:300px;text-align:center;text-decoration:none;color:var(--T);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;align-items:center;gap:10px}
 .card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1)}
-.icon{font-size:48px;margin-bottom:4px}
-.card h2{font-size:17px;font-weight:700;color:var(--P)}
-.card p{font-size:13px;color:var(--M);line-height:1.55}
-.btn{display:inline-block;margin-top:8px;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;color:#fff;width:100%}
+.icon{font-size:44px;margin-bottom:4px}
+.card h2{font-size:16px;font-weight:700;color:var(--P)}
+.card p{font-size:12.5px;color:var(--M);line-height:1.55}
+.btn{display:block;margin-top:8px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;color:#fff;width:100%;text-align:center}
 .btn-blue{background:var(--P)}
 .btn-green{background:var(--G)}
-footer{text-align:center;padding:16px;font-size:11px;color:var(--M);border-top:1px solid var(--B)}
+
+/* Setup */
+.setup-box{background:#fff;border:1px solid var(--B);border-radius:14px;padding:22px 24px;margin-bottom:24px}
+.setup-box h2{font-size:15px;font-weight:700;color:var(--P);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.setup-box p{font-size:12.5px;color:var(--M);line-height:1.55;margin-bottom:14px}
+.url-row{display:flex;gap:8px;flex-wrap:wrap}
+.url-row input{flex:1;min-width:200px;border:1.5px solid var(--B);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit}
+.url-row input:focus{outline:none;border-color:var(--A)}
+.btn-save{background:var(--P);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-save:hover{opacity:.88}
+#setup-status{font-size:12px;margin-top:8px;font-weight:600}
+#setup-status.ok{color:var(--G)}
+#setup-status.off{color:var(--M)}
+
+/* Steps */
+.steps{background:#fff;border:1px solid var(--B);border-radius:14px;padding:22px 24px}
+.steps h2{font-size:14px;font-weight:700;color:var(--P);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.step:last-child{margin-bottom:0}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--P);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{font-size:13px;color:var(--T);line-height:1.55}
+.step-body strong{color:var(--P)}
+.step-body a{color:var(--A);text-decoration:none}
+.step-body a:hover{text-decoration:underline}
+.step-body code{background:#f0f4f8;padding:2px 6px;border-radius:4px;font-size:12px;color:var(--P);font-family:monospace}
+
+footer{text-align:center;padding:14px;font-size:11px;color:var(--M);border-top:1px solid var(--B)}
+
+#toast{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;color:#fff;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.success{background:#065f46}
+#toast.error{background:#7f1d1d}
 </style>
 </head>
 <body>
@@ -33,25 +67,89 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--M);border-top:1
 </header>
 
 <main>
-  <div class="cards">
+<div class="section">
 
+  <!-- Accesos directos -->
+  <div class="cards">
     <a class="card" href="formulario-evaluacion-agencias.html">
       <div class="icon">📋</div>
       <h2>Formulario de Evaluación</h2>
-      <p>Para cada evaluador. Completá los 8 criterios por agencia con una escala del 1 al 10 y guardá tu puntaje.</p>
+      <p>Para cada evaluador. Completá los 8 criterios, obtenés tu puntaje y lo enviás directo a Google Sheets.</p>
       <span class="btn btn-blue">Abrir formulario →</span>
     </a>
-
     <a class="card" href="dashboard-evaluacion-agencias.html">
       <div class="icon">🏆</div>
       <h2>Dashboard de Resultados</h2>
-      <p>Para la puesta en común. Ingresá todos los puntajes y el sistema sugiere la agencia ganadora con gráficos.</p>
+      <p>Cargá los datos desde Google Sheets y mirá el ganador con gráficos y análisis por criterio.</p>
       <span class="btn btn-green">Ver dashboard →</span>
     </a>
-
   </div>
+
+  <!-- Setup Google Sheets URL -->
+  <div class="setup-box">
+    <h2>🔗 Configuración de Google Sheets</h2>
+    <p>Pegá aquí la URL de tu Google Apps Script. Se guarda para todas las páginas de este sitio — solo hay que hacerlo una vez.</p>
+    <div class="url-row">
+      <input type="text" id="url-input" placeholder="https://script.google.com/macros/s/.../exec" />
+      <button class="btn-save" onclick="saveUrl()">Guardar</button>
+    </div>
+    <div id="setup-status" class="off">Sin configurar</div>
+  </div>
+
+  <!-- Instrucciones Apps Script -->
+  <div class="steps">
+    <h2>⚙️ Cómo configurar Google Sheets (una sola vez)</h2>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">Creá un <strong>Google Sheet</strong> nuevo en <a href="https://sheets.google.com" target="_blank">sheets.google.com</a> y ponele el nombre que quieras.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">Dentro del Sheet, andá a <strong>Extensiones → Apps Script</strong>. Borrá el código existente y pegá el contenido del archivo <code>apps-script-codigo.js</code> que está en tu carpeta.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">Hacé clic en <strong>Implementar → Nueva implementación</strong>. Tipo: <em>Aplicación web</em>. Configurá: <em>Ejecutar como: Yo</em> · <em>Quién tiene acceso: Cualquiera</em>. Autorizá los permisos.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">Copiá la <strong>URL de la aplicación web</strong> que te genera (empieza con <code>https://script.google.com/macros/s/…/exec</code>) y pegala en el campo de arriba.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">¡Listo! Cada evaluación enviada desde el formulario aparecerá automáticamente en tu Google Sheet, y el dashboard las cargará con un clic.</div>
+    </div>
+  </div>
+
+</div>
 </main>
 
 <footer>MCAP &amp; TGA · Uso interno · Evaluación agencias digitales 2026</footer>
+<div id="toast"></div>
+
+<script>
+function getSheetsUrl(){return localStorage.getItem('gsheets_url')||'';}
+function saveUrl(){
+  const url=document.getElementById('url-input').value.trim();
+  if(!url.startsWith('https://script.google.com')){showToast('La URL debe ser de Google Apps Script','error');return;}
+  localStorage.setItem('gsheets_url',url);
+  refreshStatus();
+  showToast('✅ URL guardada. Ya podés usar el formulario y el dashboard.','success');
+}
+function refreshStatus(){
+  const url=getSheetsUrl();
+  const s=document.getElementById('setup-status');
+  if(url){s.textContent='✅ Google Sheets configurado y listo';s.className='ok';}
+  else{s.textContent='Sin configurar — seguí los pasos de abajo';s.className='off';}
+}
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='show '+type;
+  setTimeout(()=>t.className='',4500);
+}
+const saved=getSheetsUrl();
+if(saved) document.getElementById('url-input').value=saved;
+refreshStatus();
+</script>
 </body>
 </html>

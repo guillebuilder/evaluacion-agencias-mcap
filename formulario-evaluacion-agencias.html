@@ -3,370 +3,141 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Evaluación de Agencias — MCAP &amp; TGA</title>
+  <title>Formulario de Evaluación — MCAP & TGA</title>
   <style>
     :root {
-      --primary: #1a3c5e;
-      --accent:  #00a8e0;
-      --light:   #f4f7fb;
-      --border:  #d0dce9;
-      --green:   #17b26a;
-      --yellow:  #f59e0b;
-      --red:     #ef4444;
-      --text:    #1e293b;
-      --muted:   #64748b;
+      --primary: #1a3c5e; --accent: #00a8e0; --light: #f4f7fb;
+      --border: #d0dce9; --green: #17b26a; --yellow: #f59e0b;
+      --red: #ef4444; --text: #1e293b; --muted: #64748b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--light);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--light); color: var(--text); min-height: 100vh; }
 
-    /* ── HEADER ── */
-    header {
-      background: var(--primary);
-      color: #fff;
-      padding: 24px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+    /* SETUP BANNER */
+    #setup-banner {
+      background: #fef9ec; border-bottom: 2px solid #fcd34d;
+      padding: 12px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     }
-    header .logos {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-    header .badge {
-      background: var(--accent);
-      color: #fff;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 5px 12px;
-      border-radius: 20px;
-      letter-spacing: .5px;
-    }
-    header h1 { font-size: 20px; font-weight: 700; line-height: 1.25; }
-    header p  { font-size: 13px; opacity: .75; margin-top: 3px; }
-    .print-btn {
-      background: transparent;
-      border: 1.5px solid rgba(255,255,255,.5);
-      color: #fff;
-      padding: 8px 18px;
-      border-radius: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: background .2s;
-    }
-    .print-btn:hover { background: rgba(255,255,255,.12); }
+    #setup-banner.hidden { display: none; }
+    #setup-banner .setup-label { font-size: 13px; font-weight: 600; color: #78350f; white-space: nowrap; }
+    #setup-banner input { flex: 1; min-width: 260px; border: 1.5px solid #fcd34d; border-radius: 7px; padding: 7px 11px; font-size: 13px; font-family: inherit; }
+    #setup-banner input:focus { outline: none; border-color: var(--accent); }
+    .btn-setup { background: var(--primary); color: #fff; border: none; padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; }
 
-    /* ── LAYOUT ── */
-    main {
-      max-width: 820px;
-      margin: 32px auto;
-      padding: 0 20px 60px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
+    /* HEADER */
+    header { background: var(--primary); color: #fff; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    header h1 { font-size: 19px; font-weight: 700; }
+    header p { font-size: 12px; opacity: .7; margin-top: 2px; }
+    .hbadge { background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 16px; }
+    .print-btn { background: transparent; border: 1.5px solid rgba(255,255,255,.45); color: #fff; padding: 7px 15px; border-radius: 7px; font-size: 12px; cursor: pointer; }
+    .print-btn:hover { background: rgba(255,255,255,.1); }
 
-    /* ── CARDS ── */
-    .card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-    }
-    .card-title {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      color: var(--accent);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .card-title span.num {
-      background: var(--primary);
-      color: #fff;
-      border-radius: 50%;
-      width: 22px; height: 22px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
+    main { max-width: 820px; margin: 28px auto; padding: 0 20px 60px; display: flex; flex-direction: column; gap: 18px; }
 
-    /* ── META FIELDS ── */
-    .meta-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-    }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+    .card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 7px; }
+    .card-title .num { background: var(--primary); color: #fff; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
     @media (max-width: 600px) { .meta-grid { grid-template-columns: 1fr; } }
-    .field label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-    .field input, .field select, .field textarea {
-      width: 100%;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 12px;
-      font-size: 14px;
-      color: var(--text);
-      background: #fff;
-      transition: border-color .2s;
-      font-family: inherit;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    .field textarea { resize: vertical; min-height: 72px; }
+    .field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .4px; }
+    .field input, .field select, .field textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 14px; color: var(--text); font-family: inherit; transition: border-color .2s; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 76px; }
 
-    /* ── CRITERIA ── */
-    .criteria-list { display: flex; flex-direction: column; gap: 20px; }
-
-    .criterion {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-      transition: border-color .2s;
-    }
+    .criteria-list { display: flex; flex-direction: column; gap: 18px; }
+    .criterion { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; transition: border-color .2s; }
     .criterion:focus-within { border-color: var(--accent); }
-
-    .criterion-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .criterion-name {
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--primary);
-    }
-    .criterion-desc {
-      font-size: 12.5px;
-      color: var(--muted);
-      margin-top: 3px;
-      line-height: 1.5;
-    }
-
-    /* score badge */
-    .score-badge {
-      min-width: 48px;
-      height: 48px;
-      border-radius: 10px;
-      background: var(--light);
-      border: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--primary);
-      flex-shrink: 0;
-      transition: background .25s, color .25s, border-color .25s;
-    }
-
-    /* slider */
+    .criterion-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .criterion-name { font-weight: 600; font-size: 14px; color: var(--primary); }
+    .criterion-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+    .score-badge { min-width: 46px; height: 46px; border-radius: 9px; background: var(--light); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: var(--primary); flex-shrink: 0; transition: all .25s; }
     .slider-wrap { display: flex; align-items: center; gap: 10px; }
-    .slider-wrap span { font-size: 11px; color: var(--muted); width: 20px; text-align: center; flex-shrink: 0; }
-    input[type="range"] {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 6px;
-      border-radius: 3px;
-      background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct, 0%), #e2e8f0 var(--pct, 0%), #e2e8f0 100%);
-      cursor: pointer;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--primary);
-      border: 2px solid #fff;
-      box-shadow: 0 1px 4px rgba(0,0,0,.2);
-      cursor: pointer;
-      transition: transform .15s;
-    }
-    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-
-    .criterion-note {
-      margin-top: 10px;
-    }
-    .criterion-note input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 7px 11px;
-      font-size: 13px;
-      color: var(--text);
-      font-family: inherit;
-      background: var(--light);
-    }
+    .slider-wrap span { font-size: 11px; color: var(--muted); width: 18px; text-align: center; flex-shrink: 0; }
+    input[type="range"] { flex: 1; -webkit-appearance: none; height: 6px; border-radius: 3px; cursor: pointer; background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct, 0%), #e2e8f0 var(--pct, 0%), #e2e8f0 100%); }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2); cursor: pointer; }
+    .criterion-note { margin-top: 10px; }
+    .criterion-note label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 3px; }
+    .criterion-note input { width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 7px 11px; font-size: 13px; color: var(--text); background: var(--light); font-family: inherit; }
     .criterion-note input:focus { outline: none; border-color: var(--accent); background: #fff; }
-    .criterion-note label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; }
 
-    /* ── SCORE SUMMARY ── */
-    .score-summary {
-      background: var(--primary);
-      color: #fff;
-      border-radius: 12px;
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-    .score-main {
-      text-align: center;
-      flex-shrink: 0;
-    }
-    .score-main .big-num {
-      font-size: 58px;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--accent);
-    }
-    .score-main .of { font-size: 14px; opacity: .6; margin-top: 2px; }
-    .score-divider {
-      width: 1px;
-      height: 80px;
-      background: rgba(255,255,255,.2);
-      flex-shrink: 0;
-    }
-    .score-details { flex: 1; min-width: 200px; }
-    .score-details .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 5px 0;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      font-size: 13px;
-    }
+    .score-summary { background: var(--primary); color: #fff; border-radius: 12px; padding: 22px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+    .score-main .big-num { font-size: 54px; font-weight: 900; line-height: 1; color: var(--accent); }
+    .score-main .of { font-size: 13px; opacity: .6; margin-top: 2px; }
+    .score-divider { width: 1px; height: 70px; background: rgba(255,255,255,.2); flex-shrink: 0; }
+    .score-details { flex: 1; min-width: 180px; }
+    .score-details .row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 13px; }
     .score-details .row:last-child { border-bottom: none; }
     .score-details .row .lbl { opacity: .7; }
     .score-details .row .val { font-weight: 700; }
-
-    /* verdict bar */
-    .verdict {
-      width: 100%;
-      padding: 12px 18px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 15px;
-      text-align: center;
-      margin-top: 4px;
-    }
+    .verdict { width: 100%; padding: 10px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; text-align: center; margin-top: 4px; }
     .verdict.low  { background: rgba(239,68,68,.18);  color: #fca5a5; }
     .verdict.mid  { background: rgba(245,158,11,.18); color: #fcd34d; }
     .verdict.high { background: rgba(23,178,106,.18); color: #6ee7b7; }
 
-    /* ── RECOMENDACION ── */
-    .rec-grid {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-    .rec-opt {
-      flex: 1;
-      min-width: 120px;
-    }
+    .rec-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .rec-opt { flex: 1; min-width: 110px; }
     .rec-opt input[type="radio"] { display: none; }
-    .rec-opt label {
-      display: block;
-      text-align: center;
-      padding: 10px 8px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      transition: all .2s;
-      color: var(--muted);
-    }
-    .rec-opt input[type="radio"]:checked + label.yes   { border-color: var(--green);  background: #d1fae5; color: #065f46; }
-    .rec-opt input[type="radio"]:checked + label.maybe { border-color: var(--yellow); background: #fef3c7; color: #78350f; }
-    .rec-opt input[type="radio"]:checked + label.no    { border-color: var(--red);    background: #fee2e2; color: #7f1d1d; }
+    .rec-opt label { display: block; text-align: center; padding: 9px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); transition: all .2s; }
+    .rec-opt input:checked + label.yes   { border-color: var(--green);  background: #d1fae5; color: #065f46; }
+    .rec-opt input:checked + label.maybe { border-color: var(--yellow); background: #fef3c7; color: #78350f; }
+    .rec-opt input:checked + label.no    { border-color: var(--red);    background: #fee2e2; color: #7f1d1d; }
 
-    /* ── ACTIONS ── */
-    .actions {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-    .btn {
-      padding: 11px 24px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: opacity .2s, transform .1s;
-    }
-    .btn:active { transform: scale(.97); }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { opacity: .88; }
-    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--border); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .submit-section { display: flex; flex-direction: column; gap: 12px; }
+    .btn-submit { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity .2s, transform .1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-submit:active { transform: scale(.98); }
+    .btn-sheets { background: #34a853; color: #fff; }
+    .btn-sheets:hover { opacity: .88; }
+    .btn-sheets:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-print { background: var(--primary); color: #fff; }
+    .btn-print:hover { opacity: .88; }
+    .btn-reset { background: #fff; color: var(--muted); border: 1.5px solid var(--border); padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: inherit; }
+    .btn-reset:hover { border-color: var(--red); color: var(--red); }
 
-    /* ── PRINT ── */
+    #toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #fff; z-index: 999; transform: translateY(80px); opacity: 0; transition: all .35s; max-width: 320px; line-height: 1.4; pointer-events: none; }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: #065f46; }
+    #toast.error   { background: #7f1d1d; }
+    #toast.info    { background: var(--primary); }
+
     @media print {
       body { background: #fff; }
-      header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-      .print-btn, .actions { display: none; }
-      .card { break-inside: avoid; }
+      header, #setup-banner { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .submit-section, .btn-reset, #setup-banner { display: none !important; }
     }
   </style>
 </head>
 <body>
 
+<!-- SETUP BANNER -->
+<div id="setup-banner">
+  <span class="setup-label">🔗 Conectar con Google Sheets</span>
+  <input type="text" id="url-input" placeholder="Pegá la URL de tu Google Apps Script aquí…" />
+  <button class="btn-setup" onclick="saveUrl()">Guardar URL</button>
+</div>
+
 <header>
-  <div class="logos">
-    <div>
-      <h1>Evaluación de Propuesta</h1>
-      <p>Agencia de Medios Digitales — MCAP &amp; TGA</p>
-    </div>
-    <span class="badge">Presentaciones 17 Mar 2026</span>
+  <div>
+    <h1>Formulario de Evaluación</h1>
+    <p>Agencia de Medios Digitales — MCAP &amp; TGA</p>
   </div>
-  <button class="print-btn" onclick="window.print()">
-    🖨 Imprimir / Guardar PDF
-  </button>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span class="hbadge">Presentaciones 17 Mar 2026</span>
+    <button class="print-btn" onclick="window.print()">🖨 Imprimir</button>
+  </div>
 </header>
 
 <main>
 
-  <!-- ── 1. DATOS BÁSICOS ── -->
   <div class="card">
     <div class="card-title"><span class="num">1</span> Datos de la Evaluación</div>
     <div class="meta-grid">
       <div class="field">
-        <label>Evaluador/a</label>
-        <input type="text" id="evaluador" placeholder="Tu nombre" />
+        <label>Tu nombre</label>
+        <input type="text" id="evaluador" placeholder="Ej: Jorge Plaza" />
       </div>
       <div class="field">
-        <label>Empresa</label>
+        <label>Tu empresa</label>
         <select id="empresa">
           <option value="">— Seleccionar —</option>
           <option>MCAP</option>
@@ -374,189 +145,17 @@
         </select>
       </div>
       <div class="field">
-        <label>Agencia Evaluada</label>
+        <label>Agencia evaluada</label>
         <input type="text" id="agencia" placeholder="Nombre de la agencia" />
       </div>
     </div>
   </div>
 
-  <!-- ── 2. CRITERIOS ── -->
   <div class="card">
     <div class="card-title"><span class="num">2</span> Criterios de Evaluación</div>
-    <div class="criteria-list" id="criteriaList">
-
-      <!-- C1 -->
-      <div class="criterion" data-weight="1">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">1. Comprensión del Brief y del Negocio</div>
-            <div class="criterion-desc">¿Entendieron el contexto B2B/B2C, el ICP, el funnel de ventas actual y los activos estratégicos (BBDD, Red de RRHH)?</div>
-          </div>
-          <div class="score-badge" id="badge-0">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="0"
-                 oninput="updateSlider(this, 0)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-      <!-- C2 -->
-      <div class="criterion" data-weight="2">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">2. Estrategia B2B — Generación de Reuniones Corporativas ★★</div>
-            <div class="criterion-desc">¿La propuesta es sólida para lograr 10+ reuniones de calidad/semana? ¿Segmentación correcta de decisores (RRHH, Legal, HSE)? ¿Canales adecuados (LinkedIn, Google, Meta)?</div>
-          </div>
-          <div class="score-badge" id="badge-1">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="1"
-                 oninput="updateSlider(this, 1)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-      <!-- C3 -->
-      <div class="criterion" data-weight="1.5">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">3. Estrategia B2C / Micro-B2B — Transacciones Online ★</div>
-            <div class="criterion-desc">¿Aborda los 3 públicos (PYMES, profesionales independientes, empleabilidad)? ¿Propone llegar a 20 transacciones/semana con CAC ≤ $2 USD?</div>
-          </div>
-          <div class="score-badge" id="badge-2">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="2"
-                 oninput="updateSlider(this, 2)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-      <!-- C4 -->
-      <div class="criterion" data-weight="1">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">4. Creatividad y Propuesta de Contenidos</div>
-            <div class="criterion-desc">¿Los avisos/copies sugeridos son pertinentes, diferenciados y comunican bien el Game-Based Learning? ¿Priorizan correctamente (Ley Karin → Decreto 44 → RCP)?</div>
-          </div>
-          <div class="score-badge" id="badge-3">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="3"
-                 oninput="updateSlider(this, 3)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-      <!-- C5 -->
-      <div class="criterion" data-weight="1.5">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">5. Canales, SEM y Pauta Digital ★</div>
-            <div class="criterion-desc">¿La selección de canales es correcta (Google Ads, LinkedIn Ads, Meta)? ¿Aprovechan la BBDD de 10.000 contactos para remarketing/lookalike? ¿La estrategia de keywords es sólida?</div>
-          </div>
-          <div class="score-badge" id="badge-4">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="4"
-                 oninput="updateSlider(this, 4)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-      <!-- C6 -->
-      <div class="criterion" data-weight="1">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">6. Métricas, KPIs y Economics</div>
-            <div class="criterion-desc">¿Entendieron el CAC objetivo (≤$40/reunión B2B, ≤$2/licencia B2C)? ¿Proponen un dashboard de seguimiento claro? ¿Los supuestos de resultados son realistas?</div>
-          </div>
-          <div class="score-badge" id="badge-5">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="5"
-                 oninput="updateSlider(this, 5)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-      <!-- C7 -->
-      <div class="criterion" data-weight="1">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">7. Propuesta Económica</div>
-            <div class="criterion-desc">¿Las 3 opciones de inversión (75/150/250 UF/mes) son razonables? ¿El desglose pauta vs. honorarios de agencia es transparente y justificado?</div>
-          </div>
-          <div class="score-badge" id="badge-6">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="6"
-                 oninput="updateSlider(this, 6)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-      <!-- C8 -->
-      <div class="criterion" data-weight="1">
-        <div class="criterion-header">
-          <div>
-            <div class="criterion-name">8. Confianza en el Equipo y Fit Cultural</div>
-            <div class="criterion-desc">¿El equipo propuesto genera confianza? ¿Tienen experiencia en B2B o EdTech? ¿Hay buena química para una relación de trabajo? ¿Presentaron casos o resultados previos relevantes?</div>
-          </div>
-          <div class="score-badge" id="badge-7">—</div>
-        </div>
-        <div class="slider-wrap">
-          <span>1</span>
-          <input type="range" min="1" max="10" value="5" class="criterion-slider" data-index="7"
-                 oninput="updateSlider(this, 7)" />
-          <span>10</span>
-        </div>
-        <div class="criterion-note">
-          <label>Notas</label>
-          <input type="text" placeholder="Observaciones opcionales…" />
-        </div>
-      </div>
-
-    </div><!-- end criteria-list -->
+    <div class="criteria-list" id="criteriaList"></div>
   </div>
 
-  <!-- ── 3. PUNTAJE TOTAL ── -->
   <div class="score-summary">
     <div class="score-main">
       <div class="big-num" id="totalScore">—</div>
@@ -564,146 +163,198 @@
     </div>
     <div class="score-divider"></div>
     <div class="score-details">
-      <div class="row"><span class="lbl">Puntaje bruto</span>   <span class="val" id="rawScore">—/80</span></div>
-      <div class="row"><span class="lbl">Ponderado (×peso)</span><span class="val" id="wgtScore">—/100</span></div>
-      <div class="row"><span class="lbl">Criterios completos</span><span class="val" id="doneCount">0 de 8</span></div>
-      <div class="verdict low" id="verdict">Completa los criterios para ver el veredicto</div>
+      <div class="row"><span class="lbl">Puntaje bruto</span><span class="val" id="rawScore">—</span></div>
+      <div class="row"><span class="lbl">Ponderado</span><span class="val" id="wgtScore">—</span></div>
+      <div class="row"><span class="lbl">Criterios completados</span><span class="val" id="doneCount">0 de 8</span></div>
+      <div class="verdict low" id="verdict">Completá los criterios para ver el veredicto</div>
     </div>
   </div>
 
-  <!-- ── 4. RECOMENDACIÓN ── -->
   <div class="card">
     <div class="card-title"><span class="num">3</span> Recomendación Final</div>
     <div class="rec-grid">
-      <div class="rec-opt">
-        <input type="radio" name="rec" id="rec-yes" value="yes" />
-        <label for="rec-yes" class="yes">✅ Sí, la recomiendo</label>
-      </div>
-      <div class="rec-opt">
-        <input type="radio" name="rec" id="rec-maybe" value="maybe" />
-        <label for="rec-maybe" class="maybe">⚠️ Con reservas</label>
-      </div>
-      <div class="rec-opt">
-        <input type="radio" name="rec" id="rec-no" value="no" />
-        <label for="rec-no" class="no">❌ No la recomiendo</label>
-      </div>
+      <div class="rec-opt"><input type="radio" name="rec" id="rec-yes"   value="Sí, la recomiendo" /><label for="rec-yes"   class="yes">✅ Sí, la recomiendo</label></div>
+      <div class="rec-opt"><input type="radio" name="rec" id="rec-maybe" value="Con reservas"      /><label for="rec-maybe" class="maybe">⚠️ Con reservas</label></div>
+      <div class="rec-opt"><input type="radio" name="rec" id="rec-no"    value="No la recomiendo" /><label for="rec-no"    class="no">❌ No la recomiendo</label></div>
     </div>
     <div class="field">
-      <label>Comentarios Generales y Justificación</label>
-      <textarea id="comments" placeholder="¿Qué destacarías de esta propuesta? ¿Qué riesgos ves? ¿Alguna condición para elegirla?"></textarea>
+      <label>Comentarios y justificación</label>
+      <textarea id="comments" placeholder="¿Qué destacarías? ¿Qué riesgos ves? ¿Alguna condición para elegirla?"></textarea>
     </div>
   </div>
 
-  <!-- ── ACTIONS ── -->
-  <div class="actions">
-    <button class="btn btn-outline" onclick="resetForm()">↺ Reiniciar</button>
-    <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+  <div class="submit-section">
+    <button class="btn-submit btn-sheets" id="btn-submit" onclick="submitToSheets()">
+      📊 Enviar evaluación a Google Sheets
+    </button>
+    <button class="btn-submit btn-print" onclick="window.print()">
+      🖨 Imprimir / Guardar como PDF
+    </button>
+    <button class="btn-reset" onclick="resetForm()">↺ Reiniciar formulario</button>
   </div>
 
 </main>
+<div id="toast"></div>
 
 <script>
-  // Weights per criterion (index 0–7)
-  const WEIGHTS = [1, 2, 1.5, 1, 1.5, 1, 1, 1];
-  const MAX_WEIGHT = WEIGHTS.reduce((a, b) => a + b, 0); // 10
-  const scores = new Array(8).fill(null); // null = untouched
-  // Start all sliders at visual "5" but treat as untouched
-  let touched = new Array(8).fill(false);
+const CRITERIA = [
+  { name:'1. Comprensión del Brief y del Negocio',        desc:'¿Entendieron el contexto B2B/B2C, el ICP, el funnel de ventas y los activos estratégicos?' },
+  { name:'2. Estrategia B2B — Reuniones Corporativas ★★', desc:'¿La propuesta logra 10+ reuniones/semana? ¿Segmentación correcta de decisores (RRHH, Legal, HSE)?' },
+  { name:'3. Estrategia B2C / Micro-B2B ★',               desc:'¿Aborda los 3 públicos (PYMES, profesionales, empleabilidad)? ¿20+ transacciones/semana con CAC ≤$2?' },
+  { name:'4. Creatividad y Propuesta de Contenidos',      desc:'¿Los avisos diferencian bien el Game-Based Learning? ¿Priorizan Ley Karin → Decreto 44 → RCP?' },
+  { name:'5. Canales y SEM ★',                            desc:'¿Canales correctos (Google/LinkedIn/Meta)? ¿Aprovechan la BBDD de 10K para remarketing/lookalike?' },
+  { name:'6. Métricas, KPIs y Economics',                 desc:'¿Entienden el CAC target (≤$40/reunión B2B, ≤$2/licencia B2C)? ¿Proponen dashboard de seguimiento?' },
+  { name:'7. Propuesta Económica',                        desc:'¿Las 3 opciones (75/150/250 UF/mes) son razonables? ¿Desglose pauta vs honorarios transparente?' },
+  { name:'8. Confianza en el Equipo y Fit Cultural',      desc:'¿El equipo genera confianza? ¿Tienen experiencia B2B o EdTech? ¿Presentaron casos previos relevantes?' },
+];
+const WEIGHTS = [1, 2, 1.5, 1, 1.5, 1, 1, 1];
+const MAX_W   = WEIGHTS.reduce((a, b) => a + b, 0);
+const scores  = new Array(8).fill(null);
+const touched = new Array(8).fill(false);
 
-  function updateSlider(el, index) {
-    const val = parseInt(el.value);
-    touched[index] = true;
-    scores[index] = val;
+/* ── Setup / URL ── */
+function getSheetsUrl() { return localStorage.getItem('gsheets_url') || ''; }
 
-    // Update slider gradient
-    const pct = ((val - 1) / 9) * 100;
-    el.style.setProperty('--pct', pct + '%');
-
-    // Update badge
-    const badge = document.getElementById('badge-' + index);
-    badge.textContent = val;
-    badge.style.background = val >= 8 ? '#d1fae5' : val >= 5 ? '#fef3c7' : '#fee2e2';
-    badge.style.color      = val >= 8 ? '#065f46' : val >= 5 ? '#78350f' : '#7f1d1d';
-    badge.style.borderColor= val >= 8 ? '#6ee7b7' : val >= 5 ? '#fcd34d' : '#fca5a5';
-
-    recalc();
+function saveUrl() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url.startsWith('https://script.google.com')) {
+    showToast('La URL debe empezar con https://script.google.com', 'error'); return;
   }
+  localStorage.setItem('gsheets_url', url);
+  refreshBanner();
+  showToast('✅ URL guardada. Ya podés enviar evaluaciones.', 'success');
+}
 
-  function recalc() {
-    const done = touched.filter(Boolean).length;
-    document.getElementById('doneCount').textContent = done + ' de 8';
-
-    if (done === 0) {
-      document.getElementById('totalScore').textContent = '—';
-      document.getElementById('rawScore').textContent   = '—/80';
-      document.getElementById('wgtScore').textContent   = '—/100';
-      setVerdict(null);
-      return;
-    }
-
-    // Raw: sum of filled scores
-    let raw = 0, wgt = 0;
-    for (let i = 0; i < 8; i++) {
-      if (touched[i]) {
-        raw += scores[i];
-        wgt += scores[i] * WEIGHTS[i];
-      }
-    }
-
-    const rawMax = done * 10;
-    const wgtMax = touched.reduce((s, t, i) => t ? s + WEIGHTS[i] : s, 0) * 10;
-    const pct = Math.round((wgt / wgtMax) * 100);
-
-    document.getElementById('rawScore').textContent   = raw + '/' + rawMax;
-    document.getElementById('wgtScore').textContent   = wgt.toFixed(1) + '/' + wgtMax.toFixed(1);
-    document.getElementById('totalScore').textContent = pct;
-
-    setVerdict(pct);
+function refreshBanner() {
+  const url    = getSheetsUrl();
+  const banner = document.getElementById('setup-banner');
+  const btn    = document.getElementById('btn-submit');
+  if (url) {
+    banner.style.background = '#ecfdf5';
+    banner.style.borderBottomColor = '#6ee7b7';
+    banner.querySelector('.setup-label').textContent = '✅ Google Sheets conectado';
+    banner.querySelector('.setup-label').style.color = '#065f46';
+    document.getElementById('url-input').value = url;
+    btn.disabled = false;
+  } else {
+    btn.disabled = true;
   }
+}
 
-  function setVerdict(pct) {
-    const v = document.getElementById('verdict');
-    if (pct === null) {
-      v.className = 'verdict low';
-      v.textContent = 'Completa los criterios para ver el veredicto';
-      return;
-    }
-    if (pct >= 75) {
-      v.className = 'verdict high';
-      v.textContent = '🟢 Propuesta sólida — candidata fuerte';
-    } else if (pct >= 55) {
-      v.className = 'verdict mid';
-      v.textContent = '🟡 Propuesta aceptable — evaluar en conjunto';
-    } else {
-      v.className = 'verdict low';
-      v.textContent = '🔴 Propuesta débil — requiere mejoras importantes';
-    }
+/* ── Render criteria ── */
+function renderCriteria() {
+  document.getElementById('criteriaList').innerHTML = CRITERIA.map((c, i) => `
+    <div class="criterion">
+      <div class="criterion-header">
+        <div>
+          <div class="criterion-name">${c.name}</div>
+          <div class="criterion-desc">${c.desc}</div>
+        </div>
+        <div class="score-badge" id="badge-${i}">—</div>
+      </div>
+      <div class="slider-wrap">
+        <span>1</span>
+        <input type="range" min="1" max="10" value="5" style="--pct:44.4%"
+          oninput="updateSlider(this,${i})" />
+        <span>10</span>
+      </div>
+      <div class="criterion-note">
+        <label>Notas opcionales</label>
+        <input type="text" placeholder="Observaciones…" />
+      </div>
+    </div>`).join('');
+}
+
+function updateSlider(el, i) {
+  const val = parseInt(el.value);
+  touched[i] = true; scores[i] = val;
+  el.style.setProperty('--pct', ((val - 1) / 9 * 100) + '%');
+  const b = document.getElementById('badge-' + i);
+  b.textContent = val;
+  b.style.background  = val >= 8 ? '#d1fae5' : val >= 5 ? '#fef3c7' : '#fee2e2';
+  b.style.color       = val >= 8 ? '#065f46' : val >= 5 ? '#78350f' : '#7f1d1d';
+  b.style.borderColor = val >= 8 ? '#6ee7b7' : val >= 5 ? '#fcd34d' : '#fca5a5';
+  recalc();
+}
+
+function recalc() {
+  const done = touched.filter(Boolean).length;
+  document.getElementById('doneCount').textContent = done + ' de 8';
+  if (!done) { document.getElementById('totalScore').textContent='—'; setVerdict(null); return; }
+  let raw=0, wgt=0, wUsed=0;
+  for (let i=0;i<8;i++) if(touched[i]){raw+=scores[i];wgt+=scores[i]*WEIGHTS[i];wUsed+=WEIGHTS[i];}
+  const pct = Math.round((wgt/wUsed)*10);
+  document.getElementById('totalScore').textContent = pct;
+  document.getElementById('rawScore').textContent   = raw+'/'+(done*10);
+  document.getElementById('wgtScore').textContent   = wgt.toFixed(1)+'/'+(wUsed*10).toFixed(0);
+  setVerdict(pct);
+}
+
+function setVerdict(pct) {
+  const v = document.getElementById('verdict');
+  if (!pct) { v.className='verdict low'; v.textContent='Completá los criterios para ver el veredicto'; return; }
+  if (pct>=75) { v.className='verdict high'; v.textContent='🟢 Propuesta sólida — candidata fuerte'; }
+  else if(pct>=55){ v.className='verdict mid'; v.textContent='🟡 Propuesta aceptable — evaluar en conjunto'; }
+  else { v.className='verdict low'; v.textContent='🔴 Propuesta débil — requiere mejoras'; }
+}
+
+/* ── Submit ── */
+async function submitToSheets() {
+  const url       = getSheetsUrl();
+  const evaluador = document.getElementById('evaluador').value.trim();
+  const agencia   = document.getElementById('agencia').value.trim();
+  if (!url)       { showToast('Primero configurá la URL de Google Sheets arriba.', 'error'); return; }
+  if (!evaluador) { showToast('Por favor ingresá tu nombre.', 'error'); return; }
+  if (!agencia)   { showToast('Por favor ingresá el nombre de la agencia.', 'error'); return; }
+  if (touched.filter(Boolean).length < 8 && !confirm('Hay criterios sin completar. ¿Enviar de todas formas?')) return;
+
+  const recEl = document.querySelector('input[name="rec"]:checked');
+  const payload = {
+    evaluador,
+    empresa:      document.getElementById('empresa').value,
+    agencia,
+    scores:       scores.map((s,i) => touched[i] ? s : ''),
+    total:        document.getElementById('totalScore').textContent,
+    recomendacion:recEl ? recEl.value : '',
+    comentarios:  document.getElementById('comments').value.trim(),
+  };
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando…';
+
+  try {
+    await fetch(url, { method:'POST', mode:'no-cors', body: JSON.stringify(payload) });
+    btn.textContent = '✅ Enviado correctamente';
+    btn.style.background = '#065f46';
+    showToast('✅ Evaluación guardada en Google Sheets.', 'success');
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = '📊 Enviar evaluación a Google Sheets';
+    showToast('❌ Error al enviar. Verificá la URL del Apps Script.', 'error');
   }
+}
 
-  function resetForm() {
-    if (!confirm('¿Reiniciar el formulario? Se perderán todos los puntajes.')) return;
-    document.querySelectorAll('.criterion-slider').forEach((el, i) => {
-      el.value = 5;
-      el.style.setProperty('--pct', '44.4%');
-      const badge = document.getElementById('badge-' + i);
-      badge.textContent = '—';
-      badge.style.cssText = '';
-    });
-    document.querySelectorAll('.criterion-note input').forEach(el => el.value = '');
-    document.getElementById('evaluador').value = '';
-    document.getElementById('agencia').value   = '';
-    document.getElementById('empresa').value   = '';
-    document.getElementById('comments').value  = '';
-    document.querySelectorAll('input[name="rec"]').forEach(el => el.checked = false);
-    scores.fill(null);
-    touched.fill(false);
-    recalc();
-  }
+function resetForm() {
+  if (!confirm('¿Reiniciar? Se perderán todos los puntajes.')) return;
+  scores.fill(null); touched.fill(false);
+  ['evaluador','agencia','comments'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('empresa').value='';
+  document.querySelectorAll('input[name="rec"]').forEach(r=>r.checked=false);
+  renderCriteria(); recalc();
+  const btn = document.getElementById('btn-submit');
+  btn.textContent = '📊 Enviar evaluación a Google Sheets';
+  btn.style.background = ''; btn.disabled = !getSheetsUrl();
+}
 
-  // Init slider gradients
-  document.querySelectorAll('.criterion-slider').forEach(el => {
-    el.style.setProperty('--pct', '44.4%');
-  });
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + type;
+  setTimeout(() => t.className = '', 4500);
+}
+
+renderCriteria();
+refreshBanner();
 </script>
 </body>
 </html>
